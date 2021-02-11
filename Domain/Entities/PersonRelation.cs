@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Domain.Entities
 {
-    public  class PersonRelation
+    public class PersonRelation
     {
         public int ID { get; set; }
         public PersonType Type { get; set; }
