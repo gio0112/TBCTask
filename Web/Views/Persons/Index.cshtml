@@ -1,0 +1,110 @@
+﻿@model Web.Models.PersonResultViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Perosns</h1>
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="index" method="get">
+            <div class="row">
+                <div class="col-md-11">
+                    <input name="filter" class="form-control" />
+                </div>
+                <div class="col-md-1">
+                    <input type="submit" value="Search" class="btn btn-primary" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                #
+            </th>
+            <th>
+                სახელი
+            </th>
+            <th>
+                გვარი
+            </th>
+            <th>
+                პირადი ნომერი
+            </th>
+            <th>
+                დაბადების თარიღი
+            </th>
+            <th>
+                სქესი
+            </th>
+            <th>
+                მისამართი
+            </th>
+            <th>
+                ავატარი
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Persons.Count() > 0)
+        {
+            foreach (var item in Model.Persons)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PersonalNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BirthDay)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GenderID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AddressID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AvatarID)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ID })
+                        @Html.ActionLink("Details", "Details", new { id = item.ID })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (Model.PageCount > 1)
+{
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            @for (int i = 1; i < Model.PageCount; i++)
+            {
+
+                string active = i == Model.CurrentPage ? "disabled=disabled" : "";
+
+                <li class="page-item" @active><a class="page-link" href="?page=@i">@i</a></li>
+            }
+        </ul>
+    </nav>
+}
+

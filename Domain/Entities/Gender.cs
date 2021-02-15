@@ -8,5 +8,6 @@ namespace Domain.Entities
     {
         public int ID { get; set; }
         public string Value { get; set; }
+        public Person Person { get; set; }
     }
 }

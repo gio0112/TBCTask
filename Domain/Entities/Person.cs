@@ -11,9 +11,11 @@ namespace Domain.Entities
         public string LastName { get; set; }
         public string PersonalNumber { get; set; }
         public DateTime BirthDay { get; set; }
+        public int GenderID { get; set; }
+        public int AddressID { get; set; }
         public Gender Gender { get; set; }
         public City Address { get; set; }
         public Attachment Avatar { get; set; }
-        public List<Phone> ContactInfo { get; set; }
+        public ICollection<Phone> ContactInfo { get; set; }
     }
 }

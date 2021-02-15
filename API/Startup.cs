@@ -1,7 +1,9 @@
+using Domain.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,6 +13,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Core.Mapper;
+using Repository.Interfaces;
+using Repository.Repositories;
+using Service.Interfaces;
+using Service.Services;
+using Service.Middlweare;
 
 namespace API
 {
@@ -27,6 +36,25 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
 
+            //gio
+
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IService, PersonService>();
+
+            services.AddDbContext<ApplicationDbContext>(option => {
+                option.UseSqlServer(Configuration.GetConnectionString("DefaultCoonection"));
+            });
+
+            //endgio
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -37,6 +65,8 @@ namespace API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<ExceptionMiddlweare>();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

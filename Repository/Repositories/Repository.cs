@@ -1,9 +1,11 @@
-﻿using Domain.Data;
+﻿using Domain.Common;
+using Domain.Data;
 using Microsoft.EntityFrameworkCore;
 using Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace Repository.Repositories
@@ -11,18 +13,18 @@ namespace Repository.Repositories
     public class Repository<T> : IRepository<T> where T : class
     {
         private readonly ApplicationDbContext context;
-        private DbSet<T> entities;
+        private readonly DbSet<T> entities;
         string errorMessage = string.Empty;
         public Repository(ApplicationDbContext context)
         {
             this.context = context;
             entities = context.Set<T>();
         }
-        public IEnumerable<T> GetAll()
+        public IQueryable<T> GetAll()
         {
-            return entities.AsEnumerable();
+            return entities.AsQueryable();
         }
-        public T GetByID(object id)
+        public T GetByID(int id)
         {
             return entities.Find(id);
         }
@@ -35,10 +37,21 @@ namespace Repository.Repositories
             entities.Attach(entity);
             context.Entry(entity).State = EntityState.Modified;
         }
-        public void Delete(object id)
+        public void Delete(int id)
         {
             T entity = entities.Find(id);
-            Delete(entity);
+            context.Remove(entity);
+        }
+
+        public IQueryable<T> Search(Expression<Func<T, bool>> filter = null)
+        {
+            IQueryable<T> query = entities;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            return query.AsQueryable();
         }
     }
 }

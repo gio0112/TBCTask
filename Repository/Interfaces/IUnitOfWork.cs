@@ -8,6 +8,7 @@ namespace Repository.Interfaces
     public interface IUnitOfWork : IDisposable
     {
         void Save();
+        void Dispose();
         IRepository<Attachment> Attachments { get; }
         IRepository<City> Cities { get; }
         IRepository<Gender> Genders { get; }

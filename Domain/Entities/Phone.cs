@@ -9,5 +9,6 @@ namespace Domain.Entities
         public int ID { get; set; }
         public PhoneType Type { get; set; }
         public string Number { get; set; }
+        public Person Person { get; set; }
     }
 }
