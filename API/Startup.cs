@@ -48,10 +48,17 @@ namespace API
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IService, PersonService>();
+            services.AddScoped<IGenderService, GenderService>();
+            services.AddScoped<IAddressService, AddressService>();
+            services.AddScoped<IPhoneTypeService, PhoneTypeService>();
 
             services.AddDbContext<ApplicationDbContext>(option => {
                 option.UseSqlServer(Configuration.GetConnectionString("DefaultCoonection"));
             });
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
 
             //endgio
 

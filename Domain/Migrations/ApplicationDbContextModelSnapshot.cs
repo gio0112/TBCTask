@@ -26,6 +26,9 @@ namespace Domain.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("PersonID")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -54,7 +57,7 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Entities.Gender", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -62,7 +65,7 @@ namespace Domain.Migrations
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.ToTable("Genders");
                 });
@@ -74,10 +77,10 @@ namespace Domain.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AddressID")
+                    b.Property<int>("AddressID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("AvatarID")
+                    b.Property<int?>("AttachmentID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("BirthDay")
@@ -86,11 +89,14 @@ namespace Domain.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GenderID")
+                    b.Property<int>("GenderID")
                         .HasColumnType("int");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PersonTypeID")
+                        .HasColumnType("int");
 
                     b.Property<string>("PersonalNumber")
                         .HasColumnType("nvarchar(max)");
@@ -99,9 +105,11 @@ namespace Domain.Migrations
 
                     b.HasIndex("AddressID");
 
-                    b.HasIndex("AvatarID");
+                    b.HasIndex("AttachmentID");
 
                     b.HasIndex("GenderID");
+
+                    b.HasIndex("PersonTypeID");
 
                     b.ToTable("People");
                 });
@@ -113,22 +121,22 @@ namespace Domain.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("PersonID")
+                    b.Property<int>("ContactID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RelationPersonID")
+                    b.Property<int>("PersonID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TypeID")
+                    b.Property<int>("PersonTypeID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
+                    b.HasIndex("ContactID");
+
                     b.HasIndex("PersonID");
 
-                    b.HasIndex("RelationPersonID");
-
-                    b.HasIndex("TypeID");
+                    b.HasIndex("PersonTypeID");
 
                     b.ToTable("PersonRelations");
                 });
@@ -158,17 +166,17 @@ namespace Domain.Migrations
                     b.Property<string>("Number")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PersonID")
+                    b.Property<int>("PersonID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TypeID")
+                    b.Property<int>("PhoneTypeID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.HasIndex("PersonID");
 
-                    b.HasIndex("TypeID");
+                    b.HasIndex("PhoneTypeID");
 
                     b.ToTable("Phones");
                 });
@@ -191,41 +199,55 @@ namespace Domain.Migrations
             modelBuilder.Entity("Domain.Entities.Person", b =>
                 {
                     b.HasOne("Domain.Entities.City", "Address")
-                        .WithMany()
-                        .HasForeignKey("AddressID");
+                        .WithMany("People")
+                        .HasForeignKey("AddressID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Domain.Entities.Attachment", "Avatar")
-                        .WithMany()
-                        .HasForeignKey("AvatarID");
+                    b.HasOne("Domain.Entities.Attachment", "Attachment")
+                        .WithMany("People")
+                        .HasForeignKey("AttachmentID");
 
                     b.HasOne("Domain.Entities.Gender", "Gender")
-                        .WithMany()
-                        .HasForeignKey("GenderID");
+                        .WithMany("People")
+                        .HasForeignKey("GenderID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.PersonType", null)
+                        .WithMany("People")
+                        .HasForeignKey("PersonTypeID");
 
                     b.Navigation("Address");
 
-                    b.Navigation("Avatar");
+                    b.Navigation("Attachment");
 
                     b.Navigation("Gender");
                 });
 
             modelBuilder.Entity("Domain.Entities.PersonRelation", b =>
                 {
-                    b.HasOne("Domain.Entities.Person", "Person")
-                        .WithMany()
-                        .HasForeignKey("PersonID");
+                    b.HasOne("Domain.Entities.Person", "People")
+                        .WithMany("PersonRelations")
+                        .HasForeignKey("ContactID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Domain.Entities.Person", "RelationPerson")
+                    b.HasOne("Domain.Entities.Person", "Contacts")
                         .WithMany()
-                        .HasForeignKey("RelationPersonID");
+                        .HasForeignKey("PersonID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.PersonType", "Type")
-                        .WithMany()
-                        .HasForeignKey("TypeID");
+                        .WithMany("PersonRelations")
+                        .HasForeignKey("PersonTypeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Person");
+                    b.Navigation("Contacts");
 
-                    b.Navigation("RelationPerson");
+                    b.Navigation("People");
 
                     b.Navigation("Type");
                 });
@@ -233,21 +255,54 @@ namespace Domain.Migrations
             modelBuilder.Entity("Domain.Entities.Phone", b =>
                 {
                     b.HasOne("Domain.Entities.Person", "Person")
-                        .WithMany("ContactInfo")
-                        .HasForeignKey("PersonID");
+                        .WithMany("Phones")
+                        .HasForeignKey("PersonID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.PhoneType", "Type")
-                        .WithMany()
-                        .HasForeignKey("TypeID");
+                        .WithMany("Phones")
+                        .HasForeignKey("PhoneTypeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Person");
 
                     b.Navigation("Type");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Attachment", b =>
+                {
+                    b.Navigation("People");
+                });
+
+            modelBuilder.Entity("Domain.Entities.City", b =>
+                {
+                    b.Navigation("People");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Gender", b =>
+                {
+                    b.Navigation("People");
+                });
+
             modelBuilder.Entity("Domain.Entities.Person", b =>
                 {
-                    b.Navigation("ContactInfo");
+                    b.Navigation("PersonRelations");
+
+                    b.Navigation("Phones");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PersonType", b =>
+                {
+                    b.Navigation("People");
+
+                    b.Navigation("PersonRelations");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PhoneType", b =>
+                {
+                    b.Navigation("Phones");
                 });
 #pragma warning restore 612, 618
         }

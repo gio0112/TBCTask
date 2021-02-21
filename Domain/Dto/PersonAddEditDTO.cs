@@ -21,7 +21,7 @@ namespace Domain.Dto
         public int GenderID { get; set; }
         [Required]
         public int AddressID { get; set; }
-        public int AvatarID { get; set; }
-        public IFormFile File { get; set; }
+        public int? AttachmentID { get; set; }
+        public ICollection<PhoneDTO> Phones { get; set; }
     }
 }

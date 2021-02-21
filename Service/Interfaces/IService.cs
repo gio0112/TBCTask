@@ -18,5 +18,7 @@ namespace Service.Interfaces
         Task<PersonAddEditDTO> Edit(PersonAddEditDTO model);
         Task<int> Delete(int id);
         Task<AttachmentDTO> FileUpload(IFormFile file);
+        Task<PersonContactResultDTO> GetConcats(int id, int page);
+        Task<PersonRelationDTO> AddContact(PersonRelationDTO model);
     }
 }

@@ -4,10 +4,9 @@ using System.Text;
 
 namespace Domain.Dto
 {
-    public class PhoneDTO
+    public class SelectPersonsDTO
     {
         public int ID { get; set; }
-        public int PhoneTypeID { get; set; }
-        public string Number { get; set; }
+        public string FullName { get; set; }
     }
 }

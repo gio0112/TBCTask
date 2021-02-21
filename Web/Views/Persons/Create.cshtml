@@ -1,21 +1,18 @@
-﻿@model Web.Models.PersonViewModel
+﻿@model Web.Models.AddEditPersonViewModel
 
 @{
     ViewData["Title"] = "Create";
 }
 
 <h1>Create</h1>
-
-<h4>PersonViewModel</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data" method="POST">
-            <div asp-validation-summary="ModelOnly" class="text-danger" enctype="form-data" method="POST"></div>
+    <div class="col-md-6">
+        <form asp-action="Create" enctype="multipart/form-data" class="add-person">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
                 <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LastName" class="control-label"></label>
@@ -25,31 +22,38 @@
             <div class="form-group">
                 <label asp-for="PersonalNumber" class="control-label"></label>
                 <input asp-for="PersonalNumber" class="form-control" />
-                <span asp-validation-for="PersonalNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="BirthDay" class="control-label"></label>
                 <input asp-for="BirthDay" class="form-control" />
-                <span asp-validation-for="BirthDay" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="GenderID" class="control-label"></label>
-                <input asp-for="GenderID" class="form-control" />
-                <span asp-validation-for="GenderID" class="text-danger"></span>
+                @Html.DropDownListFor(Model => Model.GenderID, new SelectList(Model.Gender, "ID", "Value"), "Select Gender", new { @class = "form-control" })
             </div>
             <div class="form-group">
-                <label asp-for="AddressID" class="control-label"></label>
-                <input asp-for="AddressID" class="form-control" />
-                <span asp-validation-for="AddressID" class="text-danger"></span>
+                @Html.DropDownListFor(Model => Model.AddressID, new SelectList(Model.Address, "ID", "Value"), "Select Address", new { @class = "form-control" })
             </div>
             <div class="form-group">
-                <label asp-for="AvatarID" class="control-label"></label>
-                <input asp-for="File" class="form-control" type="file" />
+                <label asp-for="Phones" class="control-label"></label>
+                <div class="phone-input">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(Model => Model.PhoneTypeID, new SelectList(Model.PhoneType, "ID", "Value"), new { @class = "form-control", @name = "PhoneType[]" })
+                        </div>
+                        <div class="col-md-8">
+                            <input asp-for="PhoneNumber" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="File" class="control-label"></label>
+                <input asp-for="File" class="form-control" accept=".jpg,.jpeg"/>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
-        </form>
+</form>
     </div>
 </div>
 

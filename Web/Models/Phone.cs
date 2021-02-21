@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Domain.Dto
+namespace Web.Models
 {
-    public class PhoneDTO
+    public class Phone
     {
         public int ID { get; set; }
         public int PhoneTypeID { get; set; }

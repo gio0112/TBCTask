@@ -37,11 +37,16 @@ namespace API.Controllers
         // POST api/<PersonsController>
         [HttpPost("Edit")]
         public async Task<ActionResult<PersonAddEditDTO>> Edit([FromBody] PersonAddEditDTO model) => await _service.Edit(model);
-        public async Task<ActionResult<AttachmentDTO>> FileUpload([FromBody] IFormFile file) => await _service.FileUpload(file);
+        [HttpPost("FileUpload")]
+        public async Task<ActionResult<AttachmentDTO>> FileUpload(IFormFile file) => await _service.FileUpload(file);
 
         // DELETE api/<PersonsController>/5
         [HttpGet("Delete/{id}")]
         public async Task<int> Delete(int id) => await _service.Delete(id);
+        [HttpGet("GetConcats/{id}")]
+        public async Task<ActionResult<PersonContactResultDTO>> GetConcats(int id, int page) => await _service.GetConcats(id, page);
+        [HttpPost("AddContact")]
+        public async Task<ActionResult<PersonRelationDTO>> AddContact([FromBody] PersonRelationDTO model) => await _service.AddContact(model);
 
     }
 }

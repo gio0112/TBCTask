@@ -14,7 +14,8 @@ namespace Domain.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PersonID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -38,13 +39,13 @@ namespace Domain.Migrations
                 name: "Genders",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Genders", x => x.ID);
+                    table.PrimaryKey("PK_Genders", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -57,7 +58,7 @@ namespace Domain.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_serviceTypes", x => x.ID);
+                    table.PrimaryKey("PK_PersonTypes", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -83,16 +84,17 @@ namespace Domain.Migrations
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PersonalNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BirthDay = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    GenderID = table.Column<int>(type: "int", nullable: true),
-                    AddressID = table.Column<int>(type: "int", nullable: true),
-                    AvatarID = table.Column<int>(type: "int", nullable: true)
+                    GenderID = table.Column<int>(type: "int", nullable: false),
+                    AddressID = table.Column<int>(type: "int", nullable: false),
+                    AttachmentID = table.Column<int>(type: "int", nullable: true),
+                    PersonTypeID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_People", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_People_Attachments_AvatarID",
-                        column: x => x.AvatarID,
+                        name: "FK_People_Attachments_AttachmentID",
+                        column: x => x.AttachmentID,
                         principalTable: "Attachments",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
@@ -101,11 +103,17 @@ namespace Domain.Migrations
                         column: x => x.AddressID,
                         principalTable: "Cities",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_People_Genders_GenderID",
                         column: x => x.GenderID,
                         principalTable: "Genders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_People_PersonTypes_PersonTypeID",
+                        column: x => x.PersonTypeID,
+                        principalTable: "PersonTypes",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -116,31 +124,31 @@ namespace Domain.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TypeID = table.Column<int>(type: "int", nullable: true),
-                    PersonID = table.Column<int>(type: "int", nullable: true),
-                    RelationPersonID = table.Column<int>(type: "int", nullable: true)
+                    PersonTypeID = table.Column<int>(type: "int", nullable: false),
+                    PersonID = table.Column<int>(type: "int", nullable: false),
+                    ContactID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_serviceRelations", x => x.ID);
+                    table.PrimaryKey("PK_PersonRelations", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_serviceRelations_People_serviceID",
+                        name: "FK_PersonRelations_People_ContactID",
+                        column: x => x.ContactID,
+                        principalTable: "People",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PersonRelations_People_PersonID",
                         column: x => x.PersonID,
                         principalTable: "People",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_serviceRelations_People_RelationPersonID",
-                        column: x => x.RelationPersonID,
-                        principalTable: "People",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_serviceRelations_serviceTypes_TypeID",
-                        column: x => x.TypeID,
+                        name: "FK_PersonRelations_PersonTypes_PersonTypeID",
+                        column: x => x.PersonTypeID,
                         principalTable: "PersonTypes",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -149,25 +157,25 @@ namespace Domain.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TypeID = table.Column<int>(type: "int", nullable: true),
+                    PhoneTypeID = table.Column<int>(type: "int", nullable: false),
                     Number = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PersonID = table.Column<int>(type: "int", nullable: true)
+                    PersonID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Phones", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Phones_People_serviceID",
+                        name: "FK_Phones_People_PersonID",
                         column: x => x.PersonID,
                         principalTable: "People",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Phones_PhoneTypes_TypeID",
-                        column: x => x.TypeID,
+                        name: "FK_Phones_PhoneTypes_PhoneTypeID",
+                        column: x => x.PhoneTypeID,
                         principalTable: "PhoneTypes",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -176,9 +184,9 @@ namespace Domain.Migrations
                 column: "AddressID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_People_AvatarID",
+                name: "IX_People_AttachmentID",
                 table: "People",
-                column: "AvatarID");
+                column: "AttachmentID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_People_GenderID",
@@ -186,29 +194,91 @@ namespace Domain.Migrations
                 column: "GenderID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_serviceRelations_serviceID",
+                name: "IX_People_PersonTypeID",
+                table: "People",
+                column: "PersonTypeID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PersonRelations_ContactID",
+                table: "PersonRelations",
+                column: "ContactID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PersonRelations_PersonID",
                 table: "PersonRelations",
                 column: "PersonID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_serviceRelations_RelationPersonID",
+                name: "IX_PersonRelations_PersonTypeID",
                 table: "PersonRelations",
-                column: "RelationPersonID");
+                column: "PersonTypeID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_serviceRelations_TypeID",
-                table: "PersonRelations",
-                column: "TypeID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Phones_serviceID",
+                name: "IX_Phones_PersonID",
                 table: "Phones",
                 column: "PersonID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Phones_TypeID",
+                name: "IX_Phones_PhoneTypeID",
                 table: "Phones",
-                column: "TypeID");
+                column: "PhoneTypeID");
+
+
+            
+
+             //insert data
+
+            migrationBuilder.InsertData(
+            table: "Genders",
+            columns: new[] { "Value" },
+            values: new object[] { "Male"});
+
+            migrationBuilder.InsertData(
+           table: "Genders",
+           columns: new[] { "Value" },
+           values: new object[] { "Female" });
+
+            migrationBuilder.InsertData(
+          table: "Cities",
+          columns: new[] { "Value" },
+          values: new object[] { "Tbilisi" });
+
+            migrationBuilder.InsertData(
+          table: "Cities",
+          columns: new[] { "Value" },
+          values: new object[] { "Batumi" });
+
+            migrationBuilder.InsertData(
+         table: "PhoneTypes",
+         columns: new[] { "Value" },
+         values: new object[] { "Mobile" });
+
+            migrationBuilder.InsertData(
+        table: "PhoneTypes",
+        columns: new[] { "Value" },
+        values: new object[] { "Office" });
+
+            migrationBuilder.InsertData(
+        table: "PhoneTypes",
+        columns: new[] { "Value" },
+        values: new object[] { "Home" });
+
+            migrationBuilder.InsertData(
+        table: "PersonTypes",
+        columns: new[] { "Value" },
+        values: new object[] { "Colleague " });
+            migrationBuilder.InsertData(
+        table: "PersonTypes",
+        columns: new[] { "Value" },
+        values: new object[] { "Familiar" });
+            migrationBuilder.InsertData(
+        table: "PersonTypes",
+        columns: new[] { "Value" },
+        values: new object[] { "Relative" });
+            migrationBuilder.InsertData(
+        table: "PersonTypes",
+        columns: new[] { "Value" },
+        values: new object[] { "Other" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -218,9 +288,6 @@ namespace Domain.Migrations
 
             migrationBuilder.DropTable(
                 name: "Phones");
-
-            migrationBuilder.DropTable(
-                name: "PersonTypes");
 
             migrationBuilder.DropTable(
                 name: "People");
@@ -236,6 +303,9 @@ namespace Domain.Migrations
 
             migrationBuilder.DropTable(
                 name: "Genders");
+
+            migrationBuilder.DropTable(
+                name: "PersonTypes");
         }
     }
 }

@@ -6,8 +6,14 @@ namespace Domain.Entities
 {
     public class Gender
     {
-        public int ID { get; set; }
+        public Gender()
+        {
+            People = new HashSet<Person>();
+        }
+
+        public int Id { get; set; }
         public string Value { get; set; }
-        public Person Person { get; set; }
+
+        public virtual ICollection<Person> People { get; set; }
     }
 }

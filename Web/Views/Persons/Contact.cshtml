@@ -1,0 +1,157 @@
+﻿@model Web.Models.PersonContactResultViewModel
+
+@{
+    ViewData["Title"] = "Contacts";
+}
+
+
+
+
+<h1>
+
+    <article>
+
+        <span>
+            @Model.Person.FirstName
+        </span>
+
+        <span>
+            @Model.Person.LastName
+        </span>
+
+        <span>
+            @Model.Person.PersonalNumber
+        </span>
+
+        @if (Model.Person.Attachment != null)
+        {
+            <span>
+                <img src="@Model.Person.Attachment.Url" alt="Avatar" width="50" height="50" />
+            </span>
+
+        }
+
+    </article>
+
+</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Contact">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="Person.ID" class="form-control"  name="PersonID" type="hidden"/>
+
+            <div class="form-group">
+
+                <select class="form-control" name="ContactID" required>
+
+                    <option value="">Select Person</option>
+                    @foreach (var item in Model.SelectPersons)
+                    {
+                        <option value="@item.ID">@item.FullName</option>
+                    }
+
+                </select>
+
+            </div>
+            <div class="form-group">
+                <select class="form-control" name="PersonTypeID" required>
+                    <option value="">Select Contact Type</option>
+                    @foreach (var item in Model.PersonTypes)
+                    {
+                        <option value="@item.ID">@item.Value</option>
+                    }
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model.Contacts.Count() > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    #
+                </th>
+                <th>
+                    FirstName
+                </th>
+                <th>
+                    LastName
+                </th>
+                <th>
+                    BirthDay
+                </th>
+                <th>
+                    PersonalNumber
+                </th>
+                <th>
+                    Type
+                </th>
+                <th>
+                    Attachment
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model.Contacts)
+            {
+                <tr>
+                    <td>
+                        @item.ID
+                    </td>
+                    <td>
+                        @item.FirstName
+                    </td>
+                    <td>
+                        @item.LastName
+                    </td>
+                    <td>
+                        @item.BirthDay
+                    </td>
+                    <td>
+                        @item.PersonalNumber
+                    </td>
+                    <td>
+                        @item.PersonType.Value
+                    </td>
+                    <td>
+                        @if (item.Attachment != null)
+                        {
+                            <img src="@item.Attachment.Url" alt="Avatar" width="50" height="50" />
+                        }
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Contacts not found</p>
+}
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.PageCount; i++)
+        {
+
+            string active = i == Model.CurrentPage ? "disabled=disabled" : "";
+
+            <li class="page-item" @active><a class="page-link" href="?page=@i">@i</a></li>
+        }
+    </ul>
+</nav>

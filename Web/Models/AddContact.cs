@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Domain.Dto
+namespace Web.Models
 {
-    public class PersonRelationDTO
+    public class AddContact
     {
-        public int ID { get; set; }
         public int PersonTypeID { get; set; }
         public int PersonID { get; set; }
-        public int  ContactID { get; set; }
+        public int ContactID { get; set; }
     }
 }
